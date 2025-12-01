@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房间绘制工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 250px 420px 300px;
+            grid-template-rows: auto 1fr auto;
+            grid-gap: 20px;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            grid-row: 2;
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        button.active {
+            background-color: #2ecc71;
+        }
+        
+        button.delete {
+            background-color: #e74c3c;
+        }
+        
+        button.delete:hover {
+            background-color: #c0392b;
+        }
+        
+        .tool-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tool-group button {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            height: 700px;
+            width: 420px;
+            grid-row: 2;
+        }
+        
+        #drawingCanvas {
+            background-color: #f8f9fa;
+            cursor: crosshair;
+        }
+        
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            grid-row: 2;
+        }
+        
+        .coordinates-panel {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .coordinate-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .coordinate-item h4 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .room-name-input {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .coordinate-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .coordinate-inputs input {
+            flex: 1;
+            min-width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .status-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .snap-indicator {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+        }
+        
+        .shape-info {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .instructions {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px dashed #3498db;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>房间绘制工具</h1>
+            <p class="subtitle">上传底图，绘制房间</p>
+        </header>
+        
+        <div class="panel control-panel">
+            <h3 class="panel-title">控制面板</h3>
+            
+            <div>
+                <label for="backgroundUpload">上传底图:</label>
+                <input type="file" id="backgroundUpload" accept="image/*">
+            </div>
+            
+            <div>
+                <h4>房间绘制工具</h4>
+                <div class="tool-group">
+                    <button id="rectRoomBtn">矩形房间</button>
+                    <button id="polyRoomBtn">多边形房间</button>
+                </div>
+                <div class="instructions">多边形：点击添加顶点，双击完成绘制</div>
+            </div>
+            
+            <div>
+                <h4>操作</h4>
+                <div class="tool-group">
+                    <button id="clearBtn">清除画布</button>
+                    <button id="deleteBtn" class="delete">删除选中</button>
+                    <button id="exportBtn">导出JSON</button>
+                    <button id="customExportBtn">自定义格式导出</button>
+                </div>
+            </div>
+            
+            <div>
+                <h4>设置</h4>
+                <div>
+                    <label>
+                        <input type="checkbox" id="snapToCenter" checked> 捕捉到中心点
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="showGrid" checked> 显示网格
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="drawingCanvas" width="420" height="700"></canvas>
+            <div class="snap-indicator" id="snapIndicator"></div>
+            <div class="status-bar" id="statusBar">就绪 - 选择工具开始绘制</div>
+        </div>
+        
+        <div class="panel info-panel">
+            <div class="coordinates-panel">
+                <h3 class="panel-title">坐标编辑</h3>
+                <div id="coordinatesList">
+                    <!-- 坐标项将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>房间绘制工具 &copy; 2023 | 使用HTML5 Canvas和JavaScript构建</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let canvas, ctx;
+        let backgroundImage = null;
+        let currentTool = null;
+        let isDrawing = false;
+        let currentShape = null;
+        let shapes = [];
+        let selectedShape = null;
+        let snapIndicator = document.getElementById('snapIndicator');
+        let nextRoomId = 1;
+        let currentMouseX = 0;
+        let currentMouseY = 0;
+        
+        // 初始化
+        window.onload = function() {
+            canvas = document.getElementById('drawingCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置事件监听器
+            setupEventListeners();
+            
+            // 绘制初始网格
+            drawGrid();
+        };
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 文件上传
+            document.getElementById('backgroundUpload').addEventListener('change', handleBackgroundUpload);
+            
+            // 工具按钮
+            document.getElementById('rectRoomBtn').addEventListener('click', () => setTool('rectRoom'));
+            document.getElementById('polyRoomBtn').addEventListener('click', () => setTool('polyRoom'));
+            
+            // 操作按钮
+            document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+            document.getElementById('deleteBtn').addEventListener('click', deleteSelected);
+            document.getElementById('exportBtn').addEventListener('click', exportToJSON);
+            document.getElementById('customExportBtn').addEventListener('click', exportToCustomFormat);
+            
+            // 画布事件
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            canvas.addEventListener('dblclick', handleDoubleClick);
+            canvas.addEventListener('click', handleCanvasClick);
+            
+            // 设置复选框事件
+            document.getElementById('snapToCenter').addEventListener('change', redrawCanvas);
+            document.getElementById('showGrid').addEventListener('change', redrawCanvas);
+        }
+        
+        // 处理背景图片上传
+        function handleBackgroundUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                backgroundImage = new Image();
+                backgroundImage.onload = function() {
+                    // 保持图片长宽比
+                    redrawCanvas();
+                };
+                backgroundImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 设置当前工具
+        function setTool(tool) {
+            currentTool = tool;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.tool-group button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 设置活动按钮
+            if (tool === 'rectRoom') document.getElementById('rectRoomBtn').classList.add('active');
+            if (tool === 'polyRoom') document.getElementById('polyRoomBtn').classList.add('active');
+            
+            // 更新状态栏
+            const statusBar = document.getElementById('statusBar');
+            const toolNames = {
+                'rectRoom': '矩形房间',
+                'polyRoom': '多边形房间'
+            };
+            statusBar.textContent = `当前工具: ${toolNames[tool]}`;
+        }
+        
+        // 开始绘制
+        function startDrawing(e) {
+            if (!currentTool) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 检查是否捕捉到点
+            const snappedPoint = getSnappedPoint(x, y);
+            const finalX = snappedPoint ? snappedPoint.x : x;
+            const finalY = snappedPoint ? snappedPoint.y : y;
+            
+            // 如果是多边形，第一次点击开始绘制
+            if (currentTool === 'polyRoom') {
+                if (!currentShape) {
+                    // 开始新的多边形
+                    isDrawing = true;
+                    currentShape = {
+                        id: `room_${nextRoomId++}`,
+                        type: 'polygon',
+                        name: `房间${nextRoomId-1}`,
+                        points: [{x: finalX, y: finalY}],
+                        color: '#2ecc71'
+                    };
+                }
+            } else if (currentTool === 'rectRoom') {
+                isDrawing = true;
+                currentShape = {
+                    id: `room_${nextRoomId++}`,
+                    type: 'rectangle',
+                    name: `房间${nextRoomId-1}`,
+                    points: [{x: finalX, y: finalY}],
+                    color: '#3498db'
+                };
+            }
+            
+            redrawCanvas();
+        }
+        
+        // 处理点击事件（用于多边形添加顶点）
+        function handleCanvasClick(e) {
+            if (!currentTool) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 检查是否捕捉到点
+            const snappedPoint = getSnappedPoint(x, y);
+            const finalX = snappedPoint ? snappedPoint.x : x;
+            const finalY = snappedPoint ? snappedPoint.y : y;
+            
+            // 添加多边形顶点
+            if (currentTool === 'polyRoom') {
+                if (!currentShape) {
+                    // 开始新的多边形
+                    isDrawing = true;
+                    currentShape = {
+                        id: `room_${nextRoomId++}`,
+                        type: 'polygon',
+                        name: `房间${nextRoomId-1}`,
+                        points: [{x: finalX, y: finalY}],
+                        color: '#2ecc71'
+                    };
+                } else {
+                    // 添加新顶点
+                    currentShape.points.push({x: finalX, y: finalY});
+                }
+            }
+            
+            redrawCanvas();
+        }
+        
+        // 绘制过程
+        function draw(e) {
+            const rect = canvas.getBoundingClientRect();
+            currentMouseX = e.clientX;
+            currentMouseY = e.clientY;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 检查是否捕捉到点
+            const snappedPoint = getSnappedPoint(x, y);
+            const finalX = snappedPoint ? snappedPoint.x : x;
+            const finalY = snappedPoint ? snappedPoint.y : y;
+            
+            // 更新捕捉指示器
+            if (snappedPoint) {
+                snapIndicator.style.display = 'block';
+                snapIndicator.style.left = `${snappedPoint.x}px`;
+                snapIndicator.style.top = `${snappedPoint.y}px`;
+            } else {
+                snapIndicator.style.display = 'none';
+            }
+            
+            // 更新当前形状的预览点
+            if (currentShape && isDrawing) {
+                if (currentShape.type === 'rectangle') {
+                    if (currentShape.points.length === 1) {
+                        currentShape.points.push({x: finalX, y: finalY});
+                    } else {
+                        currentShape.points[1] = {x: finalX, y: finalY};
+                    }
+                }
+            }
+            
+            redrawCanvas();
+        }
+        
+        // 停止绘制 - 只处理矩形
+        function stopDrawing(e) {
+            if (!isDrawing || !currentShape) return;
+            
+            if (currentShape.type === 'rectangle') {
+                // 矩形完成
+                shapes.push(currentShape);
+                updateCoordinatesList();
+                currentShape = null;
+                isDrawing = false;
+            }
+            
+            redrawCanvas();
+        }
+        
+        // 处理双击事件 - 完成多边形
+        function handleDoubleClick(e) {
+            if (!currentShape) return;
+            
+            if (currentShape.type === 'polygon') {
+                // 双击完成多边形
+                if (currentShape.points.length > 2) {
+                    shapes.push(currentShape);
+                    updateCoordinatesList();
+                    currentShape = null;
+                    isDrawing = false;
+                }
+            }
+            
+            redrawCanvas();
+        }
+        
+        // 获取捕捉点
+        function getSnappedPoint(x, y) {
+            if (!document.getElementById('snapToCenter').checked) return null;
+            
+            const snapDistance = 10;
+            for (const shape of shapes) {
+                if (shape.type === 'rectangle' || shape.type === 'polygon') {
+                    const center = getShapeCenter(shape);
+                    if (Math.abs(center.x - x) < snapDistance && Math.abs(center.y - y) < snapDistance) {
+                        return center;
+                    }
+                }
+            }
+            return null;
+        }
+        
+        // 获取形状中心点
+        function getShapeCenter(shape) {
+            if (shape.type === 'rectangle') {
+                return {
+                    x: (shape.points[0].x + shape.points[1].x) / 2,
+                    y: (shape.points[0].y + shape.points[1].y) / 2
+                };
+            } else if (shape.type === 'polygon') {
+                let sumX = 0, sumY = 0;
+                for (const point of shape.points) {
+                    sumX += point.x;
+                    sumY += point.y;
+                }
+                return {
+                    x: sumX / shape.points.length,
+                    y: sumY / shape.points.length
+                };
+            }
+            return {x: 0, y: 0};
+        }
+
+        // 重绘画布
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景图片（靠上靠左，图片过大时缩放到画布内）
+            if (backgroundImage) {
+                // 计算缩放比例
+                let drawWidth = backgroundImage.width;
+                let drawHeight = backgroundImage.height;
+                
+                // 如果图片尺寸大于画布，则等比例缩放到画布内
+                if (drawWidth > canvas.width || drawHeight > canvas.height) {
+                    const widthRatio = canvas.width / drawWidth;
+                    const heightRatio = canvas.height / drawHeight;
+                    const ratio = Math.min(widthRatio, heightRatio);
+                    
+                    drawWidth = drawWidth * ratio;
+                    drawHeight = drawHeight * ratio;
+                }
+                
+                // 从左上角(0,0)开始绘制
+                ctx.drawImage(backgroundImage, 0, 0, drawWidth, drawHeight);
+            }
+            
+            // 绘制网格
+            if (document.getElementById('showGrid').checked) {
+                drawGrid();
+            }
+            
+            // 绘制所有形状
+            for (const shape of shapes) {
+                drawShape(shape);
+            }
+            
+            // 绘制当前正在绘制的形状
+            if (currentShape) {
+                drawShape(currentShape);
+                
+                // 如果是正在绘制的多边形，显示预览线
+                if (currentShape.type === 'polygon' && currentShape.points.length > 0) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = currentMouseX - rect.left;
+                    const y = currentMouseY - rect.top;
+                    
+                    ctx.strokeStyle = currentShape.color + '80';
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(currentShape.points[currentShape.points.length - 1].x, currentShape.points[currentShape.points.length - 1].y);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+            
+            // 绘制捕捉点
+            if (document.getElementById('snapToCenter').checked) {
+                drawSnapPoints();
+            }
+        }
+        
+        // 绘制网格
+        function drawGrid() {
+            const gridSize = 20;
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 0.5;
+            
+            // 垂直线
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // 水平线
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制形状
+        function drawShape(shape) {
+            ctx.strokeStyle = shape.color;
+            ctx.lineWidth = 2;
+            ctx.fillStyle = shape.color + '40'; // 添加透明度
+            
+            if (shape.type === 'rectangle') {
+                const x1 = shape.points[0].x;
+                const y1 = shape.points[0].y;
+                const x2 = shape.points[1].x;
+                const y2 = shape.points[1].y;
+                
+                ctx.beginPath();
+                ctx.rect(x1, y1, x2 - x1, y2 - y1);
+                ctx.fill();
+                ctx.stroke();
+                
+                // 绘制中心点和坐标
+                const center = getShapeCenter(shape);
+                drawCenterPoint(center, shape);
+                
+            } else if (shape.type === 'polygon') {
+                if (shape.points.length < 2) return;
+                
+                ctx.beginPath();
+                ctx.moveTo(shape.points[0].x, shape.points[0].y);
+                
+                for (let i = 1; i < shape.points.length; i++) {
+                    ctx.lineTo(shape.points[i].x, shape.points[i].y);
+                }
+                
+                // 如果是已完成的多边形，闭合路径
+                if (shapes.includes(shape) && shape.points.length > 2) {
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                
+                ctx.stroke();
+                
+                // 绘制中心点和坐标
+                if (shape.points.length >= 2) {
+                    const center = getShapeCenter(shape);
+                    drawCenterPoint(center, shape);
+                }
+                
+                // 绘制多边形顶点
+                for (const point of shape.points) {
+                    ctx.fillStyle = shape.color;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+        
+        // 绘制中心点和坐标
+        function drawCenterPoint(center, shape) {
+            // 绘制中心点
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制坐标文本
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText(`(${Math.round(center.x)}, ${Math.round(center.y)})`, center.x + 8, center.y - 8);
+            
+            // 绘制房间名称
+            ctx.fillText(shape.name, center.x - ctx.measureText(shape.name).width/2, center.y + 20);
+        }
+        
+        // 绘制捕捉点
+        function drawSnapPoints() {
+            for (const shape of shapes) {
+                if (shape.type === 'rectangle' || shape.type === 'polygon') {
+                    const center = getShapeCenter(shape);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.beginPath();
+                    ctx.arc(center.x, center.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+        
+        // 更新坐标列表
+        function updateCoordinatesList() {
+            const coordinatesList = document.getElementById('coordinatesList');
+            coordinatesList.innerHTML = '';
+            
+            shapes.forEach((shape, index) => {
+                const shapeItem = document.createElement('div');
+                shapeItem.className = 'coordinate-item';
+                shapeItem.dataset.shapeId = shape.id;
+                
+                const shapeName = getShapeName(shape.type);
+                shapeItem.innerHTML = `
+                    <h4>
+                        <input type="text" class="room-name-input" value="${shape.name}" placeholder="名称">
+                    </h4>
+                    <div class="shape-info">${shapeName} - ${shape.points.length}个点</div>
+                    <div class="coordinate-inputs">
+                        ${shape.points.map((point, pointIndex) => `
+                            <input type="number" value="${Math.round(point.x)}" placeholder="X${pointIndex+1}" data-point-index="${pointIndex}">
+                            <input type="number" value="${Math.round(point.y)}" placeholder="Y${pointIndex+1}" data-point-index="${pointIndex}">
+                        `).join('')}
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                const nameInput = shapeItem.querySelector('.room-name-input');
+                nameInput.addEventListener('change', (e) => {
+                    shape.name = e.target.value;
+                    redrawCanvas();
+                });
+                
+                const coordInputs = shapeItem.querySelectorAll('input[type="number"]');
+                coordInputs.forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const pointIndex = parseInt(e.target.dataset.pointIndex);
+                        const value = parseFloat(e.target.value);
+                        
+                        if (!isNaN(value)) {
+                            if (e.target.placeholder.startsWith('X')) {
+                                shape.points[pointIndex].x = value;
+                            } else {
+                                shape.points[pointIndex].y = value;
+                            }
+                            redrawCanvas();
+                        }
+                    });
+                });
+                
+                coordinatesList.appendChild(shapeItem);
+            });
+        }
+        
+        // 获取形状名称
+        function getShapeName(type) {
+            const names = {
+                'rectangle': '矩形房间',
+                'polygon': '多边形房间'
+            };
+            return names[type] || type;
+        }
+        
+        // 清除画布
+        function clearCanvas() {
+            shapes = [];
+            currentShape = null;
+            nextRoomId = 1;
+            redrawCanvas();
+            updateCoordinatesList();
+        }
+        
+        // 删除选中
+        function deleteSelected() {
+            if (selectedShape) {
+                const index = shapes.indexOf(selectedShape);
+                if (index !== -1) {
+                    shapes.splice(index, 1);
+                    selectedShape = null;
+                    redrawCanvas();
+                    updateCoordinatesList();
+                }
+            }
+        }
+        
+        // 导出为JSON
+        function exportToJSON() {
+            const data = {
+                rooms: shapes.filter(shape => 
+                    shape.type === 'rectangle' || 
+                    shape.type === 'polygon'
+                ).map(room => ({
+                    id: room.id,
+                    name: room.name,
+                    type: room.type,
+                    center: getShapeCenter(room),
+                    points: room.points
+                })),
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    totalRooms: shapes.filter(shape => 
+                        shape.type === 'rectangle' || 
+                        shape.type === 'polygon'
+                    ).length
+                }
+            };
+            
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'room_data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 导出为自定义格式
+        function exportToCustomFormat() {
+            let output = '';
+            
+            shapes.forEach(shape => {
+                const center = getShapeCenter(shape);
+                let pointsString = '';
+                
+                if (shape.type === 'rectangle' && shape.points.length === 2) {
+                    // 矩形补全四个坐标点
+                    const [p1, p2] = shape.points;
+                    const points = [
+                        {x: p1.x, y: p1.y},
+                        {x: p2.x, y: p1.y},
+                        {x: p2.x, y: p2.y},
+                        {x: p1.x, y: p2.y}
+                    ];
+                    pointsString = points.map(point => 
+                        `${point.x.toFixed(4)},${point.y.toFixed(4)}`
+                    ).join(' ');
+                } else {
+                    // 多边形或其他形状直接使用所有点
+                    pointsString = shape.points.map(point => 
+                        `${point.x.toFixed(4)},${point.y.toFixed(4)}`
+                    ).join(' ');
+                }
+                
+                // 使用中心点坐标计算label和data的Y值
+                const centerX = center.x.toFixed(4);
+                const centerY = center.y.toFixed(4);
+                const labelY = (center.y - 30).toFixed(4);  // label在中心点上方的位置
+                const dataY = (center.y + 30).toFixed(4);   // data在中心点下方的位置
+                
+                output += `  - id: ${shape.name}\n`;
+                output += `    name: ${shape.name}\n`;
+                output += `    points: ${pointsString}\n`;
+                output += `    labelX: "${centerX}"\n`;
+                output += `    labelY: "${labelY}"\n`;
+                output += `    dataX: "${centerX}"\n`;
+                output += `    dataY: "${dataY}"\n\n`;
+            });
+            
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'room_data.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
