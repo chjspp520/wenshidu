@@ -11,9 +11,10 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
   <img src="https://raw.githubusercontent.com/chjspp520/wenshidu/main/%E5%8D%95%E6%B8%A9%E5%BA%A6.png" alt="单温度面板，显示房间温度值" style="width: 30%; height: auto; margin: 5px;">
   <img src="https://raw.githubusercontent.com/chjspp520/wenshidu/main/%E6%B8%A9%E5%BA%A6%E6%B9%BF%E5%BA%A6.png" alt="温度和湿度面板并排显示" style="width: 30%; height: auto; margin: 5px;">
 
-  <img src="https://raw.githubusercontent.com/chjspp520/wenshidu/main/%E5%85%A8%E9%83%A8.png" alt="完整卡片界面，包括时间线、温度和湿度面板" style="width: 30%; height: auto; margin: 5px;">
-  <img src="https://raw.githubusercontent.com/chjspp520/wenshidu/main/%E5%8D%95%E6%B8%A9%E5%BA%A6.png" alt="单温度面板，显示房间温度值" style="width: 30%; height: auto; margin: 5px;">
-  <img src="https://raw.githubusercontent.com/chjspp520/wenshidu/main/%E6%B8%A9%E5%BA%A6%E6%B9%BF%E5%BA%A6.png" alt="温度和湿度面板并排显示" style="width: 30%; height: auto; margin: 5px;">
+  <img src="https://github.com/chjspp520/wenshidu/blob/main/%E5%9B%BE%E8%A1%A8.png" alt="点击房间弹出的图表" style="width: 30%; height: auto; margin: 5px;">
+  <img src="https://github.com/chjspp520/wenshidu/blob/main/%E5%9B%BE%E8%A1%A82.png" alt="点击房间弹出的图表" style="width: 30%; height: auto; margin: 5px;">
+  <img src="https://github.com/chjspp520/wenshidu/blob/main/%E5%9B%BE%E8%A1%A83.png" alt="点击房间弹出的图表" style="width: 30%; height: auto; margin: 5px;">
+
 </div>
 
 
