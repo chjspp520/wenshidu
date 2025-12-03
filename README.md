@@ -36,9 +36,13 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
 
 实体支持：兼容多种传感器实体（如 sensor.temperature），并处理“未知”或“不可用”状态。
 
+最小模式：新增当show_time_section: false时，点击卡片空白处弹出完整卡片（全功能）
+
+
 其他：自动滑动检测（无交互时前进到当前时间）、错误处理（如无历史数据提示），以及 eCharts 路径自定义（本地或 CDN）。
 
 该卡片强调用户交互性和视觉反馈，例如房间高亮动画和图表交互（缩放、拖拽）。
+
 
 
 ## 安装
@@ -60,6 +64,11 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
 在 Lovelace 编辑器中添加卡片，类型为 custom:wenshidu-card。配置使用 YAML 格式，定义房间、实体和显示选项。
 图表使用的是echarts.min.js，可以手动配置为本地文件，不配置时使用cdn文件https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js
 手动配置时，卡片配置中增加echarts_path: /local/echarts.min.js
+
+
+## 鸣谢
+
+设置每个房间的温湿度字体大小、保留小数位数、是否显示房间名称（该功能由[sun0962](https://github.com/sun0962)完善；
 
 ## 配置示例
 以下是 `wenshidu-card` 的 YAML 配置示例。你可以复制并调整到你的 Home Assistant Lovelace 中。
@@ -91,6 +100,9 @@ rooms:
     dataY: "250"
     room-data_font_size_round: 60,1                  #房间温湿度字体大小，不配置时默认55px，1代表保留小数位数
     room-label_font_size: 55                         #房间名称字体大小，不配置时默认55px
+    room-unit_display:
+      temperature: true                              #是否显示温度单位          
+      humidity: true                                 #是否显示湿度单位   
   - id: 厨房
     name: 厨房
     points: 347.9378,88.0653 631.7944,88.0653 631.7944,251.1769 347.9378,251.1769
