@@ -15,7 +15,8 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
   <img src="https://github.com/chjspp520/wenshidu/blob/main/%E5%9B%BE%E8%A1%A82.png" alt="点击房间弹出的图表" style="width: 30%; height: auto; margin: 5px;">
   <img src="https://github.com/chjspp520/wenshidu/blob/main/%E5%9B%BE%E8%A1%A83.png" alt="点击房间弹出的图表" style="width: 30%; height: auto; margin: 5px;">
   <img src="https://github.com/chjspp520/wenshidu/blob/main/%E6%B8%A9%E6%B9%BF%E5%BA%A6%E5%8D%A1%E7%89%87%E6%BC%94%E7%A4%BAgif.gif" alt="点击房间弹出的图表" style="width: 80%; height: auto; margin: 5px;">
-
+  v1.1.0新增功能
+   <img src="https://github.com/chjspp520/wenshidu/blob/main/%E4%BB%85%E6%B8%A9%E6%B9%BF%E5%BA%A6%E6%88%BF%E9%97%B4%E5%8D%A1%E7%89%87.gif" alt="点击房间弹出的图表" style="width: 80%; height: auto; margin: 5px;">
 
 </div>
 
