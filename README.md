@@ -199,6 +199,65 @@ humidity_colors:
 
 ```
 
+V1.2.0
+2026年1月17日新增以下功能
+1、新增3D展示功能。
+2、新增2个外部接口提供外部数据支持（用户可以自行搭建不外数据支持）
+```yaml
+api_base_url: http://192.168.1.62:5000/wenshidu/api
+1）获取指定月那些日期有数据（在日历种显示"A"） http://192.168.1.62:5000/wenshidu/api/dates?year=2026&month=1
+返回的json如下：
 
+{
+"dates": [
+"2026-01-17",
+"2026-01-16",
+"2026-01-15",
+"2026-01-14",
+],
+"mode": "month",
+"success": true
+}
 
+2）获取指定日期的数，当不使用room参数时返回指定时间的所有房间数据（&room=%E5%AE%A2%E5%8E%85）：http://192.168.1.62:5000/wenshidu/api/room-data-range?start_time=2025-12-01+00%3A00%3A00&end_time=2025-12-01+23%3A59%3A59&room=%E5%AE%A2%E5%8E%85
+返回的json如下：
+{
+"data": [
+{
+"humidity": 18,
+"room": "客厅",
+"temperature": 24.7,
+"time": "2025-12-01 00:00:00"
+},
+{
+"humidity": 18,
+"room": "客厅",
+"temperature": 24.9,
+"time": "2025-12-01 00:30:00"
+},
+{
+"humidity": 18,
+"room": "客厅",
+"temperature": 24.9,
+"time": "2025-12-01 01:00:00"
+},
+{
+"humidity": 18,
+"room": "客厅",
+"temperature": 24.9,
+"time": "2025-12-01 23:30:00"
+}
+],
+"end_time": "2025-12-01 23:59:59",
+"limit_used": 1000,
+"message": "找到48条记录",
+"room": "客厅",
+"rooms_found": [
+"客厅"
+],
+"start_time": "2025-12-01 00:00:00",
+"success": true,
+"total_records": 48
+}
+```
 
