@@ -84,6 +84,9 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
 ```yaml
 
 type: custom:wenshidu-card
+api_base_url: http://192.168.1.62:5000/wenshidu/api   #外部api支持，结尾处会详细介绍外部api对数据的要求
+card_width: 430px     #卡片宽度，不设置时为自适应宽度
+show_3dtemperature_section: true   #是否开启3D功能
 show_time_section: true     # 显示时间段（默认 true）
 show_temperature_section: true   # 显示温度面板（默认 true）
 show_humidity_section: true       # 显示湿度面板（默认 true）
