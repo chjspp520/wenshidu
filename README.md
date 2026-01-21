@@ -18,10 +18,7 @@ Wenshidu Card 是一个专为 Home Assistant 设计的自定义 Lovelace 卡片�
   v1.1.0新增功能
    <img src="https://github.com/chjspp520/wenshidu/blob/main/%E4%BB%85%E6%B8%A9%E6%B9%BF%E5%BA%A6%E6%88%BF%E9%97%B4%E5%8D%A1%E7%89%87.gif" alt="点击房间弹出的图表" style="width: 80%; height: auto; margin: 5px;">
 
-  ### v1.2.0新增功能
-  1、新增3D展示功能。
-  
-  2、新增2个外部接口提供外部数据支持（用户可以自行搭建不外数据支持）
+  ### v1.2.0新增3D展示功能。
   
    <img src="https://github.com/chjspp520/wenshidu/blob/main/V1.2.0.gif" alt="点击房间弹出的图表" style="width: 80%; height: auto; margin: 5px;">
 
@@ -209,6 +206,13 @@ humidity_colors:
 
 ```
 ## 版本说明
+
+v1.2.1        
+ 2026年1月21日新增以下功能
+1、修复了一些小问题。
+2、为了避免因网络问题无法加载3d渲染是需要的js文件，新增优先加载本地的3D渲染js，需要将OrbitControls.js和three.min.js放在www文件夹下。
+
+
 ### V1.2.0     2026年1月17日新增以下功能
 1、新增3D展示功能。
 2、新增2个外部接口提供外部数据支持（用户可以自行搭建不外数据支持）
